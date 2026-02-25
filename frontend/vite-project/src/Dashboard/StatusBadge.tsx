@@ -6,14 +6,8 @@ interface StatusBadgeProps {
 export default function StatusBadge({ on, label }: StatusBadgeProps) {
   return (
     <div className="flex items-center gap-2">
-      <div
-        className={`w-2 h-2 rounded-full ${
-          on ? "bg-[#00ff88] shadow-[0_0_6px_#00ff88]" : "bg-[#1e3a4a]"
-        }`}
-      />
-      <span className={`text-[10px] tracking-[2px] ${on ? "text-[#00ff88]" : "text-[#2a4a5a]"}`}>
-        {label}
-      </span>
+      <div className={`w-2 h-2 rounded-full ${on ? "bg-[#ff7828] shadow-[0_0_6px_#ff7828]" : "bg-black/10"}`} />
+      <span className={`text-xs ${on ? "text-black/80" : "text-black/25"}`}>{label}</span>
     </div>
   );
 }

@@ -16,15 +16,15 @@ interface CameraChartProps {
 
 export default function CameraChart({ title, data, lines, unit }: CameraChartProps) {
   return (
-    <div className="border border-[#1e3a4a] bg-[#020d14] p-6">
-      <p className="text-[9px] text-[#4a7a8a] tracking-[3px] mb-6">{title} · LAST 30 DAYS</p>
+    <div className="bg-white rounded-3xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-black/5">
+      <p className="text-xs text-black/30 tracking-wider mb-6">{title} · LAST 30 DAYS</p>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#0d2030" />
-          <XAxis dataKey="timestamp" tick={{ fill: "#4a7a8a", fontSize: 10 }} />
-          <YAxis tick={{ fill: "#4a7a8a", fontSize: 10 }} unit={unit} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+          <XAxis dataKey="timestamp" tick={{ fill: "rgba(0,0,0,0.3)", fontSize: 10 }} />
+          <YAxis tick={{ fill: "rgba(0,0,0,0.3)", fontSize: 10 }} unit={unit} />
           <Tooltip content={<ChartTooltip />} />
-          <Legend wrapperStyle={{ fontSize: "10px", color: "#4a7a8a" }} />
+          <Legend wrapperStyle={{ fontSize: "11px", color: "rgba(0,0,0,0.4)" }} />
           {lines.map((line) => (
             <Line
               key={line.dataKey}

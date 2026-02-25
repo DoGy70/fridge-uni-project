@@ -48,7 +48,7 @@ export default function CameraPage({ fetchData }: CameraPageProps) {
     const data = await res.json();
     setCamera(data.camera);
     setLogs(data.timestamps.map((ts: string, i: number) => ({
-      timestamp: new Date(ts).toLocaleDateString(),
+      timestamp: new Date(ts).toLocaleTimeString(),
       temperature: data.temperatures[i],
       evaporator_temperature: data.temperatures_evaporator[i],
       humidity: data.humidities?.[i] ?? null,
@@ -79,90 +79,83 @@ export default function CameraPage({ fetchData }: CameraPageProps) {
   const latestLog = logs[logs.length - 1] ?? null;
 
   if (loading) return (
-    <div className="min-h-screen bg-[#020d14] flex items-center justify-center font-mono text-[#00d4ff] text-xs tracking-[4px]">
-      LOADING UNIT...
+    <div className="min-h-screen bg-white flex items-center justify-center text-black/30 text-sm">
+      Loading unit...
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#020d14] font-mono relative">
-      {/* Grid background */}
-      <div className="fixed inset-0 pointer-events-none z-0" style={{
-        backgroundImage: "linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)",
-        backgroundSize: "40px 40px",
-      }} />
+    <div className="min-h-screen bg-white font-sans relative">
+      <div className="fixed top-[-200px] right-[-200px] w-[500px] h-[500px] rounded-full bg-[#ff7828] opacity-5 pointer-events-none" />
 
-      {/* Scanlines */}
-      <div className="fixed inset-0 pointer-events-none z-10" style={{
-        background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.01) 2px, rgba(0,212,255,0.01) 4px)",
-      }} />
-
-      <div className="relative z-20 p-4 md:p-8">
+      <div className="relative z-10 p-4 md:p-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8 border-b border-[#1e3a4a] pb-6">
+        <div className="flex justify-between items-center mb-8 pb-6 border-b border-black/5">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate("/dashboard")}
-              className="text-[#4a7a8a] hover:text-[#00d4ff] transition-colors text-xs tracking-[2px]"
+              className="text-black/30 hover:text-[#ff7828] transition-colors text-sm"
             >
-              ← BACK
+              ← Back
             </button>
             <div>
-              <p className="text-[10px] text-[#4a7a8a] tracking-[3px]">UNIT</p>
-              <h1 className="text-2xl font-bold text-white tracking-[6px]">
-                CAM-{String(id).padStart(2, "0")}
-              </h1>
+              <p className="text-xs text-black/30">Unit</p>
+              <h1 className="text-2xl font-bold text-black">CAM-{String(id).padStart(2, "0")}</h1>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            {saving && <span className="text-[10px] text-[#00d4ff] tracking-[2px] animate-pulse">SAVING...</span>}
-            <div className={`flex items-center gap-2 px-3 py-1 border ${
-              latestLog ? "border-[#00ff88] text-[#00ff88]" : "border-[#ff4444] text-[#ff4444]"
+          <div className="flex items-center gap-3">
+            {saving && <span className="text-xs text-[#ff7828] animate-pulse">Saving...</span>}
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs ${
+              latestLog ? "bg-[#ff7828]/10 text-[#ff7828]" : "bg-black/5 text-black/30"
             }`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${latestLog ? "bg-[#00ff88] animate-pulse" : "bg-[#ff4444]"}`} />
-              <span className="text-[9px] tracking-[2px]">{latestLog ? "ONLINE" : "OFFLINE"}</span>
+              <div className={`w-1.5 h-1.5 rounded-full ${latestLog ? "bg-[#ff7828] animate-pulse" : "bg-black/20"}`} />
+              {latestLog ? "Online" : "Offline"}
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: readings + controls */}
-          <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="flex flex-col gap-4">
             <CameraReadings camera={camera!} latestLog={latestLog} />
             <CameraControls
               autoMode={autoMode}
               compressorOn={compressorOn}
               ventilationOn={ventilationOn}
               heaterOn={heaterOn}
+              targetTemperature={camera?.target_temperature ?? null}
+              defrostThreshold={camera?.defrost_threshold_temperature ?? null}
               onAutoMode={async (v) => { setAutoMode(v); await updateCamera({ auto_mode: v }); }}
               onCompressor={async (v) => { setCompressorOn(v); await updateCamera({ compressor_on: v }); }}
               onVentilation={async (v) => { setVentilationOn(v); await updateCamera({ ventilation_on: v }); }}
               onHeater={async (v) => { setHeaterOn(v); await updateCamera({ heater_on: v }); }}
+              onSave={async (updates: any) => {
+                await updateCamera(updates);
+                setCamera((prev) => prev ? { ...prev, ...updates } : prev);
+              }}
             />
           </div>
 
-          {/* Right: charts */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
+          <div className="lg:col-span-2 flex flex-col gap-4">
             <CameraChart
               title="TEMPERATURE"
               data={logs}
               unit="°"
               lines={[
-                { dataKey: "temperature", stroke: "#00d4ff", name: "TEMP" },
-                { dataKey: "evaporator_temperature", stroke: "#00ff88", name: "EVAPORATOR" },
+                { dataKey: "temperature", stroke: "#ff7828", name: "Temp" },
+                { dataKey: "evaporator_temperature", stroke: "#ffb347", name: "Evaporator" },
               ]}
             />
             <CameraChart
               title="HUMIDITY"
               data={logs}
               unit="%"
-              lines={[{ dataKey: "humidity", stroke: "#ff9500", name: "HUMIDITY" }]}
+              lines={[{ dataKey: "humidity", stroke: "#333333", name: "Humidity" }]}
             />
             <CameraChart
               title="VOLTAGE"
               data={logs}
               unit="V"
-              lines={[{ dataKey: "supply_voltage", stroke: "#ff4444", name: "VOLTAGE" }]}
+              lines={[{ dataKey: "supply_voltage", stroke: "#ff4444", name: "Voltage" }]}
             />
           </div>
         </div>

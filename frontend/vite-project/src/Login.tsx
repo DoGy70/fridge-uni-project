@@ -18,20 +18,17 @@ export default function Login({ onLogin }: LoginProps) {
     try {
       const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",  // sends/receives cookies
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json()
-      console.log(res)
+      const data = await res.json();
       if (res.ok) {
-        onLogin();  // no longer passing a token
+        onLogin();
       } else {
         setError(data.message || "Login failed");
       }
     } catch (e) {
-      const error = e as Error
-      console.log(error.message)
       setError("Could not connect to server");
     } finally {
       setLoading(false);
@@ -39,95 +36,70 @@ export default function Login({ onLogin }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#020d14] flex items-center justify-center font-mono relative overflow-hidden">
+    <div className="min-h-screen bg-white flex items-center justify-center font-sans relative overflow-hidden">
+      {/* Decorative orange circle */}
+      <div className="fixed top-[-200px] right-[-200px] w-[500px] h-[500px] rounded-full bg-[#ff7828] opacity-10 pointer-events-none" />
+      <div className="fixed bottom-[-150px] left-[-150px] w-[400px] h-[400px] rounded-full bg-[#ff7828] opacity-5 pointer-events-none" />
 
-      {/* Grid background */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-
-      {/* Scanlines */}
-      <div
-        className="fixed inset-0 pointer-events-none z-10"
-        style={{
-          background:
-            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.015) 2px, rgba(0,212,255,0.015) 4px)",
-        }}
-      />
-
-      {/* Card */}
-      <div className="relative z-20 w-full max-w-md mx-4 p-12 bg-[#020d14] border border-[#1e3a4a] shadow-[0_0_60px_rgba(0,212,255,0.08)]">
-
-        {/* Status */}
-        <div className="flex items-center gap-2 mb-10">
-          <div className="w-2 h-2 rounded-full bg-[#00ff88] shadow-[0_0_8px_#00ff88] animate-pulse" />
-          <span className="text-[#00ff88] text-xs tracking-[3px]">SYSTEM ONLINE</span>
-        </div>
-
+      <div className="relative z-10 w-full max-w-sm mx-4">
         {/* Logo */}
         <div className="text-center mb-10">
-          <div className="flex justify-center mb-4 drop-shadow-[0_0_12px_rgba(0,212,255,0.4)]">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <rect x="8" y="4" width="32" height="40" rx="2" stroke="#00d4ff" strokeWidth="2" />
-              <rect x="8" y="4" width="32" height="16" rx="2" fill="#00d4ff" fillOpacity="0.1" stroke="#00d4ff" strokeWidth="2" />
-              <line x1="8" y1="20" x2="40" y2="20" stroke="#00d4ff" strokeWidth="2" />
-              <circle cx="24" cy="32" r="4" stroke="#00d4ff" strokeWidth="1.5" />
-              <line x1="24" y1="28" x2="24" y2="24" stroke="#00d4ff" strokeWidth="1.5" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#ff7828] mb-6 shadow-[0_8px_30px_rgba(255,120,40,0.3)]">
+            <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+              <rect x="8" y="4" width="32" height="40" rx="4" fill="white" fillOpacity="0.3" stroke="white" strokeWidth="2" />
+              <rect x="8" y="4" width="32" height="16" rx="4" fill="white" fillOpacity="0.4" stroke="white" strokeWidth="2" />
+              <line x1="8" y1="20" x2="40" y2="20" stroke="white" strokeWidth="2" />
+              <circle cx="24" cy="32" r="4" stroke="white" strokeWidth="2" />
+              <line x1="24" y1="28" x2="24" y2="24" stroke="white" strokeWidth="2" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-[8px] mb-2">FRIGIDWATCH</h1>
-          <p className="text-[10px] text-[#4a7a8a] tracking-[3px]">MONITORING CONTROL SYSTEM v1.0</p>
+          <h1 className="text-3xl font-bold text-black tracking-tight mb-1">Frigidwatch</h1>
+          <p className="text-sm text-black/40">Monitoring Control System</p>
         </div>
 
-        {/* Form */}
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] text-[#4a7a8a] tracking-[3px]">OPERATOR ID</label>
-            <input
-              type="email"
-              placeholder="operator@domain.com"
-              value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-              className="bg-[rgba(0,212,255,0.03)] border border-[#1e3a4a] text-[#00d4ff] px-4 py-3 text-sm font-mono outline-none focus:border-[#00d4ff] transition-colors w-full placeholder-[#1e3a4a]"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] text-[#4a7a8a] tracking-[3px]">ACCESS CODE</label>
-            <input
-              type="password"
-              placeholder="••••••••••••"
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && handleLogin()}
-              className="bg-[rgba(0,212,255,0.03)] border border-[#1e3a4a] text-[#00d4ff] px-4 py-3 text-sm font-mono outline-none focus:border-[#00d4ff] transition-colors w-full placeholder-[#1e3a4a]"
-            />
-          </div>
-
-          {error && (
-            <div className="bg-[rgba(255,60,60,0.1)] border border-[rgba(255,60,60,0.3)] text-[#ff6060] px-4 py-3 text-xs tracking-wider">
-              ⚠ {error.toUpperCase()}
+        {/* Card */}
+        <div className="bg-white rounded-3xl p-8 shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-black/5">
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs text-black/50 font-medium tracking-wide">Email</label>
+              <input
+                type="email"
+                placeholder="operator@domain.com"
+                value={email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                className="bg-black/5 rounded-xl px-4 py-3 text-black text-sm outline-none border border-transparent focus:border-[#ff7828] transition-colors placeholder-black/20"
+              />
             </div>
-          )}
 
-          <button
-            onClick={handleLogin}
-            disabled={loading}
-            className="mt-2 border border-[#00d4ff] text-[#00d4ff] py-4 text-xs tracking-[4px] font-mono transition-all hover:bg-[#00d4ff] hover:text-[#020d14] disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {loading ? "AUTHENTICATING..." : "AUTHENTICATE"}
-          </button>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs text-black/50 font-medium tracking-wide">Password</label>
+              <input
+                type="password"
+                placeholder="••••••••••••"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && handleLogin()}
+                className="bg-black/5 rounded-xl px-4 py-3 text-black text-sm outline-none border border-transparent focus:border-[#ff7828] transition-colors placeholder-black/20"
+              />
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-500 text-xs">
+                {error}
+              </div>
+            )}
+
+            <button
+              onClick={handleLogin}
+              disabled={loading}
+              className="bg-[#ff7828] hover:bg-[#e86a1a] text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_20px_rgba(255,120,40,0.3)] mt-2"
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-8 pt-5 border-t border-[#0d2030] text-center">
-          <span className="text-[9px] text-[#1e3a4a] tracking-[2px]">SECURE ACCESS · ENCRYPTED CHANNEL</span>
-        </div>
+        <p className="text-center text-black/20 text-xs mt-6">Secure · Encrypted</p>
       </div>
     </div>
   );

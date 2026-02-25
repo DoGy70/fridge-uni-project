@@ -1,0 +1,5 @@
+.env
+node_modules/
+server/camera.db
+server/__pycache__/
+*.pyc

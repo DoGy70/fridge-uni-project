@@ -39,40 +39,22 @@ export default function Dashboard({ fetchData }: DashboardProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#020d14] font-mono relative">
+    <div className="min-h-screen bg-white font-sans relative">
+      <div className="fixed top-[-200px] right-[-200px] w-[500px] h-[500px] rounded-full bg-[#ff7828] opacity-5 pointer-events-none" />
 
-      {/* Grid background */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-
-      {/* Scanlines */}
-      <div
-        className="fixed inset-0 pointer-events-none z-10"
-        style={{
-          background:
-            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.01) 2px, rgba(0,212,255,0.01) 4px)",
-        }}
-      />
-
-      <div className="relative z-20 p-4 md:p-8">
+      <div className="relative z-10 p-4 md:p-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6 md:mb-10 border-b border-[#1e3a4a] pb-4 md:pb-6">
+        <div className="flex justify-between items-center mb-8 pb-6 border-b border-black/5">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold text-white tracking-[6px] md:tracking-[8px]">FRIGIDWATCH</h1>
-            <p className="text-[10px] text-[#4a7a8a] tracking-[3px] mt-1">MONITORING CONTROL SYSTEM v1.0</p>
+            <h1 className="text-2xl font-bold text-black tracking-tight">Frigidwatch</h1>
+            <p className="text-xs text-black/30 mt-0.5">Monitoring Control System</p>
           </div>
-          <div className="flex items-center gap-3 md:gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-[#00ff88] shadow-[0_0_8px_#00ff88] animate-pulse" />
-              <span className="text-[#00ff88] text-xs tracking-[3px]">LIVE</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-black/5 rounded-full px-4 py-2">
+              <div className="w-2 h-2 rounded-full bg-[#ff7828] shadow-[0_0_8px_#ff7828] animate-pulse" />
+              <span className="text-black/50 text-xs">Live</span>
             </div>
-            <span className="hidden md:block text-[10px] text-[#4a7a8a] tracking-[2px]">
+            <span className="hidden md:block text-xs text-black/30">
               {new Date().toLocaleDateString()} · {new Date().toLocaleTimeString()}
             </span>
           </div>
@@ -80,17 +62,17 @@ export default function Dashboard({ fetchData }: DashboardProps) {
 
         {/* Content */}
         {loading ? (
-          <div className="flex items-center justify-center h-64 text-[#00d4ff] text-xs tracking-[4px]">
-            LOADING UNITS...
+          <div className="flex items-center justify-center h-64 text-black/30 text-sm">
+            Loading units...
           </div>
         ) : cameras.length === 0 ? (
-          <div className="flex items-center justify-center h-64 text-[#4a7a8a] text-xs tracking-[4px]">
-            NO UNITS DETECTED
+          <div className="flex items-center justify-center h-64 text-black/30 text-sm">
+            No units detected
           </div>
         ) : (
           <>
-            {/* Mobile: horizontal scroll */}
-            <div className="flex md:hidden gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide"
+            <div
+              className="flex md:hidden gap-4 overflow-x-auto pb-4 snap-x snap-mandatory"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {cameras.map((camera) => (
@@ -99,22 +81,13 @@ export default function Dashboard({ fetchData }: DashboardProps) {
                 </div>
               ))}
             </div>
-
-            {/* Desktop: grid */}
-            <div className="hidden md:grid grid-cols-2 xl:grid-cols-4 gap-6">
+            <div className="hidden md:grid grid-cols-2 xl:grid-cols-4 gap-4">
               {cameras.map((camera) => (
                 <CameraCard key={camera.id} camera={camera} fetchData={fetchData} />
               ))}
             </div>
           </>
         )}
-
-        {/* Mobile scroll indicator */}
-        <div className="flex md:hidden justify-center gap-2 mt-4">
-          {cameras.map((camera) => (
-            <div key={camera.id} className="w-1.5 h-1.5 rounded-full bg-[#1e3a4a]" />
-          ))}
-        </div>
       </div>
     </div>
   );
