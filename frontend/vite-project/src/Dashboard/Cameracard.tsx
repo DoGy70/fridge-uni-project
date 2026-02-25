@@ -65,7 +65,7 @@ export default function CameraCard({ camera, fetchData }: CameraCardProps) {
       </div>
 
       {/* Temp Display */}
-      <div className="bg-[#ff7828] rounded-2xl p-4 mb-5 text-center">
+      <div className="bg-[#ff7828] rounded-2xl p-4 mb-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
         <p className="text-[10px] text-white/70 mb-1 tracking-wider">CURRENT TEMP</p>
         <p className="text-4xl font-bold text-white">
           {camera.temperature != null ? `${camera.temperature.toFixed(1)}°` : "—"}
