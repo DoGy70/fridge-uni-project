@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Справка програма</h2>
+    Средна ефективност за прожекциите: {{avg_effectiveness|floatformat:"1"}}
+    <br>
+    Средно време между прожекция в зала: {{total_average|floatformat:"0"}} мин
+    <br>
+    Прожекции с ниска запълняемост: {{low_occupancy_projections|floatformat:"0"}} от {{total_projections|floatformat:"0"}} - {{perc|floatformat:"1"}}%
+
+    <!-- <p>Можете да използвате тези данни за о</p> -->
+    <table style="background-color: gray;" class="table table-striped mt-4">
+    <thead>
+        <tr>
+            <!-- <th>ID</th> -->
+            <th>Начало</th>
+            <th>Край</th>
+            <th>Зала</th>
+            <th>Заглавие</th>
+            <th>Рейтинг</th>
+            <th>Продадени билети</th>
+            <th>Прогноза билети</th>
+            <th>Ефективност</th>
+            <!-- Add more columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for sample in projections %}
+        <tr>
+            <!-- <td>{{ sample.id }}</td> -->
+            <td>{{ sample.start_time|date:'d.m H:i' }}</td>
+            <td>{{ sample.end_time|date:'d.m H:i' }}</td>
+            <td>{{ sample.hall.name }}</td>
+            <td>{{ sample.movie_title }}</td>
+            <td>{{ sample.get_movie_rating|default:"" }}</td>
+            <td>{{ sample.tickets_sold|default_if_none:""}}</td>
+            <td>{{ sample.forecast_tickets_sold }}</td>
+            <td>{{ sample.get_effectiveness|floatformat:"1" }}</td>
+            <!-- Add more fields as needed -->
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No samples found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
+

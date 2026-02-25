@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4 d-flex justify-content-center">
+	<form class="text-center">
+		<div class="form-group">
+			<label for="text">Текст на алармата:</label>
+			<textarea rows="3" cols="50" id="text" name="text" class="form-control"></textarea>
+		</div>
+		<button id="submit-alarm" class="btn btn-primary mt-3">Пусни аларма</button>
+	</form>
+</div>
+
+<script>
+	$('#submit-alarm').on('click', async function (e) {
+		e.preventDefault();
+		$(this).attr('disabled', true);
+		fetch('{% url "alarm" %}', {
+			method: 'POST',
+			body: JSON.stringify({ 'create': true, 'text': $('#text').val() }),
+			headers: { "X-CSRFToken": '{{ csrf_token }}' }
+		}).then(function() {
+			$('#submit-alarm').removeAttr('disabled');
+		});
+	});
+</script>
+
+{% endblock %}

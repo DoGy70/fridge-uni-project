@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load tz %}
+{% block extrahead %}
+<style>
+  #settings-btn {
+    position: fixed;
+    top: 90px;
+    right: 15px;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="modal fade" id="settings-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Настройки контролен панел</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+					<p class="h5">Зали, които да бъдат показвани:</p>
+          {% for hall in halls %}
+          <div class="form-group">
+            <input type="checkbox" class="hall-checkbox" name="{{hall.id}}" checked autocomplete="off"/>
+            <label for="{{hall.id}}">{{ hall.name }}</label>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="form-group">
+					<p class="h5">Параметри, които да бъдат показвани:</p>
+          <div class="form-group">
+						<div class="form-group">
+							<input type="checkbox" class="parameter-checkbox" name="hall" checked autocomplete="off"/>
+							<label for="hall">Зала</label>
+						</div>
+						<div class="form-group">
+							<input type="checkbox" class="parameter-checkbox" name="temperature" checked autocomplete="off"/>
+							<label for="temperature">Температура</label>
+						</div>
+						<div class="form-group">
+							<input type="checkbox" class="parameter-checkbox" name="target-temperature" checked autocomplete="off"/>
+							<label for="target-temperature">Таргет темп.</label>
+						</div>
+						<div class="form-group">
+							<input type="checkbox" class="parameter-checkbox" name="outside-temperature" checked autocomplete="off"/>
+							<label for="outside-temperature">Външна темп.</label>
+						</div>
+						<div class="form-group">
+							<input type="checkbox" class="parameter-checkbox" name="humidity" checked autocomplete="off"/>
+							<label for="humidity">Влажност</label>
+						</div>
+						<div class="form-group">
+							<input type="checkbox" class="parameter-checkbox" name="co2" checked autocomplete="off"/>
+							<label for="co2">CO₂</label>
+						</div>
+						<div class="form-group">
+							<input type="checkbox" class="parameter-checkbox" name="fan-speed" checked autocomplete="off"/>
+							<label for="fan-speed">Интензивност</label>
+						</div>
+						<div class="form-group">
+							<input type="checkbox" class="parameter-checkbox" name="created-at" checked autocomplete="off"/>
+							<label for="created-at">Време</label>
+						</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Затвори</button>
+        <button type="button" class="btn btn-primary" id="save-settings">Запиши</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="settings-btn" data-bs-toggle="modal" data-bs-target="#settings-modal">⚙️</div>
+<div class="container mt-4">
+    <h2>Исторически семпъл данни</h2>
+    <!-- <p>Можете да използвате тези данни за о</p> -->
+    <table style="background-color: gray;" class="table table-striped mt-4">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th class="parameter hall">Зала</th>
+            <th class="parameter temperature">Температура</th>
+            <th class="parameter target-temperature">Таргет темп.</th>
+            <th class="parameter outside-temperature">Външна темп.</th>
+            <th class="parameter humidity">Влажност</th>
+            <th class="parameter co2">CO₂</th>
+            <th class="parameter fan-speed">Интензивност</th>
+            <th class="parameter created-at">Време</th>
+            <!-- Add more columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        {% timezone 'Europe/Sofia' %}
+        {% for sample in samples %}
+        <tr class="hall-{{sample.hall.id}}">
+            <td>{{ sample.id }}</td>
+            <td class="parameter hall">{{ sample.hall }}</td>
+            <td class="parameter temperature">{{ sample.temperature|floatformat:"1" }}</td>
+            <td class="parameter target-temperature">{{ sample.target_temperature|floatformat:"1" }}</td>
+            <td class="parameter outside-temperature">{{ sample.outside_temperature|floatformat:"1" }}</td>
+            <td class="parameter humidity">{{ sample.humidity }}</td>
+            <td class="parameter co2">{{ sample.co2 }}</td>
+            <td class="parameter fan-speed">{{ sample.fan_speed }}</td>
+            <td class="parameter created-at">{{ sample.created_at }}</td>
+            <!-- Add more fields as needed -->
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No samples found.</td>
+        </tr>
+        {% endfor %}
+        {% endtimezone %}
+    </tbody>
+</table>
+</div>
+<script>
+
+  function applySettings() {
+		$('.hall-checkbox').prop('checked', true);
+		$('.hall').show();
+		$('.parameter-checkbox').prop('checked', true);
+		$('.parameter').show();
+    for (const hall of settings.halls) {
+      $(`.hall-${hall}`).hide();
+      $(`.hall-checkbox[name=${hall}]`).prop('checked', false);
+    }
+    for (const parameter of settings.parameters) {
+      $(`.${parameter}`).hide();
+      $(`.parameter-checkbox[name=${parameter}]`).prop('checked', false);
+    }
+  }
+
+  {% if not settings %}
+  let settings = {
+    halls: [],
+    parameters: []
+  };
+  {% else %}
+  let settings = JSON.parse('{{ settings|safe }}');
+  {% endif %}
+  applySettings();
+
+	$('#save-settings').on('click', function() {
+		$(this).attr('disabled', true);
+		fetch('{% url "sample_settings" %}', {
+			method: 'POST',
+			body: JSON.stringify(settings),
+			headers: { "X-CSRFToken": '{{ csrf_token }}' }
+		}).then(function() {
+			$('#save-settings').removeAttr('disabled');
+			$('#settings-modal').modal('hide');
+		});
+	});
+
+	$('.hall-checkbox, .parameter-checkbox').on('change', function() {
+		settings = {
+			halls: $('.hall-checkbox:not(:checked)').map(function() {
+				return $(this).attr('name');
+			}).get().map(Number),
+
+			parameters: $('.parameter-checkbox:not(:checked)').map(function() {
+				return $(this).attr('name');
+			}).get()
+		};
+
+		applySettings();
+	});
+</script>
+{% endblock %}
+

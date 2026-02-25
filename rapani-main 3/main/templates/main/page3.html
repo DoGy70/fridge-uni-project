@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+            <h2>Настройки на ML и RL параметри</h2>
+    <div class="row">
+        <div class="col-md-6">
+    
+        <label for="learningRate">Скорост на обучение (Learning Rate)</label>
+        <input  class="form-control" type="number" id="learningRate" value="0.001" step="0.0001">
+
+        <label for="nEstimators">Брой дървета</label>
+        <input class="form-control" type="number" id="nEstimators" value="100">
+
+        <label for="maxDepth">Максимална дълбочина на дърветата</label>
+        <input class="form-control" type="number" id="maxDepth" value="10">
+
+        <!-- RL Parameters -->
+        <label for="gamma">Дисконтен фактор (γ)</label>
+        <input class="form-control" type="number" id="gamma" value="0.99" step="0.01" min="0" max="1">
+
+        <label for="epsilon">Степен на изследване (ε)</label>
+        <input class="form-control" type="number" id="epsilon" value="0.1" step="0.01" min="0" max="1">
+
+        <label for="batchSize">Размер на партидата (Batch Size)</label>
+        <input class="form-control" type="number" id="batchSize" value="64">
+
+        <label for="episodes">Брой епизоди</label>
+        <input class="form-control" type="number" id="episodes" value="500">
+
+        <label for="hiddenLayers">Скрити слоеве</label>
+        <input class="form-control" type="text" id="hiddenLayers" value="64,64">
+
+        <button style="background-color: gray; border-color:red; margin-top: 10px;" class="btn btn-primary" onclick="applyParams()">Приложи параметрите</button>
+      
+    </div>
+
+        <div class="col-md-6">
+         <div class="container">
+            <br>
+            <p><strong>Learning Rate:</strong> Определя колко бързо моделът се учи. По-висока стойност = по-бързо, но може да е нестабилно.</p>
+            <p><strong>Number of Estimators:</strong> Брой на дърветата (моделите), които се комбинират при Random Forest/XGBoost.</p>
+            <p><strong>Max Depth:</strong> Максимална дълбочина на всяко дърво. По-голяма стойност = по-сложен модел.</p>
+            <p><strong>Gamma (γ):</strong> Дисконтен фактор в RL. Определя колко важни са бъдещите награди спрямо моментните.</p>
+            <p><strong>Epsilon (ε):</strong> Степен на изследване. Определя колко често агентът прави случайни действия за изследване на средата.</p>
+            <p><strong>Batch Size:</strong> Колко примера се използват наведнъж при обновяване на модела.</p>
+            <p><strong>Episodes:</strong> Брой тренировки (епизоди), през които агентът учи.</p>
+            <p><strong>Hidden Layers:</strong> Брой и размер на скритите слоеве в невронната мрежа, например "64,64" означава два слоя с по 64 неврона.</p>
+        
+        </div>
+
+
+
+        <!-- ML Parameters -->
+
+
+
+
+
+</div>
+</div>  
+    <script>
+        function applyParams() {
+            const params = {
+                learningRate: parseFloat(document.getElementById('learningRate').value),
+                nEstimators: parseInt(document.getElementById('nEstimators').value),
+                maxDepth: parseInt(document.getElementById('maxDepth').value),
+                gamma: parseFloat(document.getElementById('gamma').value),
+                epsilon: parseFloat(document.getElementById('epsilon').value),
+                batchSize: parseInt(document.getElementById('batchSize').value),
+                episodes: parseInt(document.getElementById('episodes').value),
+                hiddenLayers: document.getElementById('hiddenLayers').value
+            };
+
+            alert("Внимание! Приложихте нови параметри. Това може да наруши работата на системата. Предстои рестарт на контролния модул. \nПриложени параметри:\n" + JSON.stringify(params, null, 2));
+        }
+    </script>
+
+{% endblock %}
+
