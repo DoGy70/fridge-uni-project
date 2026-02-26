@@ -33,7 +33,7 @@ BASE_DIR = "/Users/mpomanov/Desktop/programming-stuff/fridge/server/"
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, os.environ.get('DB_PATH', 'camera.db'))}"
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY')
-app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+app.config['JWT_TOKEN_LOCATION'] = ['cookies', 'headers']
 app.config["JWT_COOKIE_SECURE"] = False
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=7)

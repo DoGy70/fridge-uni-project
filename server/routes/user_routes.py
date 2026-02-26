@@ -48,6 +48,23 @@ def login():
     
     return jsonify({"message": "Invalid credentials"}), 401
 
+@user_bp.route('/mobile/login', methods=["POST"])
+@limiter.limit("5 per minute", error_message="Too many login attempts. Please wait a minute.")
+def login_mobile():
+    try:
+        data = LoginSchema().load(request.json)
+    except ValidationError as e:
+        return jsonify({'message': e.messages}), 400
+    
+    user = User.query.filter_by(email=data['email']).first()
+    if user and bcrypt.check_password_hash(user.password_hash, data['password']):
+        access_token = create_access_token(identity=str(user.id))
+        response = make_response(jsonify({'message': 'Login successful', "access_token": access_token}))
+        return response, 200
+    
+    return jsonify({"message": "Invalid credentials"}), 401
+
+
 # Example of a protected route
 @user_bp.route('/me', methods=["GET"])
 @jwt_required()
