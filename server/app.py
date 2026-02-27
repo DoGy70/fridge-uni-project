@@ -36,7 +36,8 @@ app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY')
 app.config['JWT_TOKEN_LOCATION'] = ['cookies', 'headers']
 app.config["JWT_COOKIE_SECURE"] = False
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=7)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 
 
 db.init_app(app)

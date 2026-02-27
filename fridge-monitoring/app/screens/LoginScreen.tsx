@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
-const BASE_URL = "http://192.168.0.177:8080";
+const BASE_URL = "http://172.20.10.4:8080";
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -35,11 +35,14 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
       const data = await res.json();
       if (res.ok) {
         await SecureStore.setItemAsync("access_token", data.access_token);
+        await SecureStore.setItemAsync("refresh_token", data.refresh_token)
         onLogin();
       } else {
         setError(data.message || "Login failed");
       }
     } catch (e) {
+      const error = e as Error
+      console.log(error)
       setError("Could not connect to server");
     } finally {
       setLoading(false);

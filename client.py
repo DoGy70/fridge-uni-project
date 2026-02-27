@@ -344,13 +344,10 @@ def main():
                     temperature_stop_defrost = temperature_start_defrost + hysteresis_defrost
                     change_defrost = hysteresis_control_defrost(evaporator_temperature, temperature_start_defrost, temperature_stop_defrost)
                     if change_defrost is not None:
-                        print("change_defrost:", change_defrost)
                         if change_defrost == 1:
                             current_state["status"] = "DEFROST"
                             compressor_and_ventilation_forbidden = True
-                            print(current_state["defrost_type"])
                             if current_state["defrost_type"] == "AUTO":
-                                print("Hello from auto!")
                                 set_relay_states({"compressor": 0, "ventilation": 0, "heater": 0})
                             else:
                                 set_relay_states({"compressor": 0, "ventilation": 0, "heater": change_defrost})
@@ -364,8 +361,9 @@ def main():
                         temperature_start_compressor = temperature_stop_compressor + hysteresis_compressor_stop
                         change_compressor = hysteresis_control(temperature, temperature_start_compressor, temperature_stop_compressor)
                         if change_compressor is not None:
-                            set_relay_states({"compressor": change_compressor})
+                            set_relay_states({"compressor": change_compressor, "ventilation": change_compressor})
                             current_state["relay_states"]["compressor"] = change_compressor
+                            current_state["relay_states"]["ventilation"] = change_compressor
             else:
                 relays = current_state["relay_states"]
                 set_relay_states({"compressor": relays["compressor"], "ventilation": relays["ventilation"], "heater": relays["heater"]})

@@ -1,13 +1,32 @@
 import { useCallback } from "react";
 import * as SecureStore from "expo-secure-store";
 
-const BASE_URL = "http://192.168.0.177:8080";
+const BASE_URL = "http://172.20.10.4:8080";
 
 export function useApi(onLogout: () => void) {
+  const refreshAccessToken = async (): Promise<string | null> => {
+    const refreshToken = await SecureStore.getItemAsync("refresh_token");
+    if (!refreshToken) return null;
+
+    const res = await fetch(`${BASE_URL}/refresh_token`, {
+      method: "POST",
+      headers: {
+        'ContentType': 'application/json',
+        Authorization: `Bearer ${refreshToken}`
+      }
+    });
+
+    if (!res.ok) return null
+
+    const data = await res.json()
+    await SecureStore.setItemAsync("access_token", data.access_token);
+    return data.access_token
+  }
+
   const fetchData = useCallback(async (endpoint: string, options: RequestInit = {}) => {
-    const token = await SecureStore.getItemAsync("access_token");
+    let token = await SecureStore.getItemAsync("access_token");
     try{
-        const res = await fetch(`${BASE_URL}${endpoint}`, {
+        let res = await fetch(`${BASE_URL}${endpoint}`, {
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -17,10 +36,23 @@ export function useApi(onLogout: () => void) {
         });
 
         if (res.status === 401) {
-            await SecureStore.deleteItemAsync("access_token");
-            onLogout();
-            return null;
+            token = await refreshAccessToken();
+            if(!token) {
+              await SecureStore.deleteItemAsync('access_token');
+              await SecureStore.deleteItemAsync('refresh_token');
+              onLogout();
+              return null;
+            }
         }
+
+        res = await fetch(`${BASE_URL}${endpoint}`, {
+          ...options,
+          headers: {
+            'Content-Type': "application/json",
+            Authorization: `Bearer ${token}`,
+            ...options.headers
+          }
+        })
         return res;
     } catch (e) {
         const error = e as Error
