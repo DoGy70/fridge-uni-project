@@ -1,6 +1,5 @@
 import "../global.css";
 import { useState, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SecureStore from "expo-secure-store";
 import { View, Text, TouchableOpacity } from "react-native";
@@ -9,6 +8,7 @@ import DashboardScreen from "./screens/DashboardScreen";
 import CameraScreen from "./screens/CameraScreen";
 import { useApi } from "../hooks/useApi";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {StatusBar} from "expo-status-bar"
 
 const Stack = createNativeStackNavigator();
 
@@ -39,12 +39,13 @@ export default function App() {
 
    if (loading) return (
     <View className="flex-1 bg-white items-center justify-center">
-      <Text className="text-black/30 text-sm">Initializing...</Text>
+      <Text className="text-black/30 text-sm">Зарежда се...</Text>
     </View>
   );
 
   return (
     <SafeAreaProvider>
+        <StatusBar style="dark" />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!loggedIn ? (
             <Stack.Screen name="Login">
@@ -58,19 +59,19 @@ export default function App() {
                     header: () => (
                         <View className="px-4 pb-4 border-b border-black/5 flex-row justify-between items-center bg-white">
                             <View>
-                                <Text className="text-2xl font-bold text-black tracking-tight">Frigidwatch</Text>
-                                <Text className="text-xs text-black/30 mt-0.5">Monitoring Control System</Text>
+                                <Text className="text-2xl font-bold text-black tracking-tight">ХладоСтраж</Text>
+                                <Text className="text-xs text-black/30 mt-0.5">Система за Мониторинг</Text>
                             </View>
                             <View className="flex-row items-center gap-3">
                                 <View className="flex-row items-center gap-2 bg-black/5 rounded-full px-3 py-1.5">
                                     <View className="w-2 h-2 rounded-full bg-[#ff7828]" />
-                                    <Text className="text-xs text-black/50">Live</Text>
+                                    <Text className="text-xs text-black/50">Включен</Text>
                                 </View>
                                 <TouchableOpacity
                                     onPress={handleLogout}
                                     className="bg-black/5 rounded-full px-3 py-1.5"
                                   >
-                                    <Text className="text-xs text-black/50">Logout</Text>
+                                    <Text className="text-xs text-black/50">Изход</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

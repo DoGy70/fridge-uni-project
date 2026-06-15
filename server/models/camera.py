@@ -21,8 +21,8 @@ class ModeEnum(enum.Enum):
     AUTO = "AUTO"
 
 class StatusEnum(enum.Enum):
-    ON = "ON",
-    OFF = "OFF",
+    ON = "ON"
+    OFF = "OFF"
     DEFROST = "DEFROST"
 
 class Camera(db.Model):

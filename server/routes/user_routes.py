@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, make_response
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, set_access_cookies, set_refresh_cookies
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
 
 from database import db
 
@@ -32,12 +32,12 @@ def register():
     return jsonify({"message": "User created"}), 201
 
 @user_bp.route('/login', methods=["POST"])
-@limiter.limit("5 per minute", error_message="Too many login attempts. Please wait a minute.")
+@limiter.limit("5 per minute", error_message="Прекалено много опити. Моля опитайте по-късно.")
 def login():
     try:
         data = LoginSchema().load(request.json)
     except ValidationError as e:
-        return jsonify({'message': e.messages}), 400
+        return jsonify({'message': list(e.messages.values())[0]}), 400
     
     user = User.query.filter_by(email=data['email']).first()
     if user and bcrypt.check_password_hash(user.password_hash, data['password']):
@@ -48,15 +48,15 @@ def login():
         set_refresh_cookies(response, refresh_token)
         return response, 200
     
-    return jsonify({"message": "Invalid credentials"}), 401
+    return jsonify({"message": "Невалидни данни."}), 401
 
 @user_bp.route('/mobile/login', methods=["POST"])
-@limiter.limit("5 per minute", error_message="Too many login attempts. Please wait a minute.")
+@limiter.limit("5 per minute", error_message="Прекалено много опити. Моля опитайте по-късно.")
 def login_mobile():
     try:
         data = LoginSchema().load(request.json)
     except ValidationError as e:
-        return jsonify({'message': e.messages}), 400
+        return jsonify({'message': list(e.messages.values())[0]}), 400
     
     user = User.query.filter_by(email=data['email']).first()
     if user and bcrypt.check_password_hash(user.password_hash, data['password']):
@@ -65,7 +65,7 @@ def login_mobile():
         response = make_response(jsonify({'message': 'Login successful', "access_token": access_token, "refresh_token": refresh_token}))
         return response, 200
     
-    return jsonify({"message": "Invalid credentials"}), 401
+    return jsonify({"message": "Невалидни данни."}), 401
 
 
 # Example of a protected route
@@ -84,3 +84,9 @@ def refresh_token():
     response = make_response(jsonify({"message": "Token Refresh Successful"}))
     set_access_cookies(response, access_token)
     return response
+
+@user_bp.route('/logout', methods=["POST"])
+def logout():
+    response = make_response(jsonify({'message': 'Logged Out'}))
+    unset_jwt_cookies(response)
+    return response, 200

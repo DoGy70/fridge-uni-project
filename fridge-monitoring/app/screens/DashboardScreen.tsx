@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { View, Text, FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as SecureStore from "expo-secure-store";
 import { Camera } from "../../types";
 import CameraCard from "../../components/camera/CameraCard";
 
@@ -29,8 +28,6 @@ export default function DashboardScreen({ fetchData, navigation }: DashboardScre
     setRefreshing(false);
   }, []);
 
-  
-
   useEffect(() => {
     loadCameras();
     const interval = setInterval(loadCameras, 5000);
@@ -38,10 +35,10 @@ export default function DashboardScreen({ fetchData, navigation }: DashboardScre
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white pt-4">
       {loading ? (
         <View className="flex-1 items-center justify-center">
-          <Text className="text-black/30 text-sm">Loading units...</Text>
+          <Text className="text-black/30 text-sm">Зарежда обекти...</Text>
         </View>
       ) : (
         <FlatList
@@ -59,7 +56,7 @@ export default function DashboardScreen({ fetchData, navigation }: DashboardScre
           )}
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center py-24">
-              <Text className="text-black/30 text-sm">No units detected</Text>
+              <Text className="text-black/30 text-sm">Няма налични обекти</Text>
             </View>
           }
         />

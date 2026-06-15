@@ -28,7 +28,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-BASE_DIR = "/Users/mpomanov/Desktop/programming-stuff/fridge/server/"
+BASE_DIR = "/Users/mpomanov/Desktop/diplomen-proekt/fridge/server/"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, os.environ.get('DB_PATH', 'camera.db'))}"
@@ -43,7 +43,7 @@ app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 db.init_app(app)
 Bcrypt(app)
 JWTManager(app)
-CORS(app, supports_credentials=True, origins=['http://localhost:5173'])
+CORS(app, supports_credentials=True, origins=['http://localhost:5173', 'http://192.168.0.238:5173'])
 limiter.init_app(app)
 
 @event.listens_for(Engine, "connect")
@@ -75,7 +75,7 @@ with app.app_context():
 
 @app.errorhandler(RateLimitExceeded)
 def handle_rate_limit(e):
-    return jsonify({"message": "Too many attempts. Please try again later."}), 429
+    return jsonify({"message": "Прекалено много опити. Моля опитайте по-късно"}), 429
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=8080)

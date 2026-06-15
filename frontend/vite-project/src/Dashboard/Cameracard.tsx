@@ -50,45 +50,45 @@ export default function CameraCard({ camera, fetchData }: CameraCardProps) {
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <p className="text-xs text-black/30 mb-0.5">Unit</p>
-          <h2 className="text-xl font-bold text-black">CAM-{String(camera.id).padStart(2, "0")}</h2>
+          <p className="text-xs text-black/30 mb-0.5">Обект</p>
+          <h2 className="text-xl font-bold text-black">Камера-{String(camera.id).padStart(2, "0")}</h2>
         </div>
         <div className="flex flex-col items-end gap-1">
           <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs ${
             isOnline ? "bg-[#ff7828]/10 text-[#ff7828]" : "bg-black/5 text-black/30"
           }`}>
             <div className={`w-1.5 h-1.5 rounded-full ${isOnline ? "bg-[#ff7828] animate-pulse" : "bg-black/20"}`} />
-            {isOnline ? "Online" : "Offline"}
+            {isOnline ? "Онлайн" : "Офлайн"}
           </div>
-          {saving && <span className="text-[10px] text-[#ff7828] animate-pulse">Saving...</span>}
+          {saving && <span className="text-[10px] text-[#ff7828] animate-pulse">Запазва се...</span>}
         </div>
       </div>
 
       {/* Temp Display */}
       <div className="bg-[#ff7828] rounded-2xl p-4 mb-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
-        <p className="text-[10px] text-white/70 mb-1 tracking-wider">CURRENT TEMP</p>
+        <p className="text-[10px] text-white/70 mb-1 tracking-wider">СЕГАШНА ТЕМПЕРАТУРА</p>
         <p className="text-4xl font-bold text-white">
           {camera.temperature != null ? `${camera.temperature.toFixed(1)}°` : "—"}
         </p>
-        <p className="text-[10px] text-white/50 mt-1">Celsius</p>
+        <p className="text-[10px] text-white/50 mt-1">Целзий</p>
       </div>
 
       {/* Data Rows */}
       <div className="mb-5">
-        <DataRow label="Target Temp" value={camera.target_temperature != null ? `${camera.target_temperature.toFixed(1)}°C` : "—"} />
-        <DataRow label="Evaporator Temp" value={camera.evaporator_temperature != null ? `${camera.evaporator_temperature.toFixed(1)}°C` : "—"} />
-        <DataRow label="Defrost Threshold" value={camera.defrost_threshold_temperature != null ? `${camera.defrost_threshold_temperature.toFixed(1)}°C` : "—"} />
-        <DataRow label="Voltage" value={camera.supply_voltage != null ? `${camera.supply_voltage.toFixed(1)}V` : "—"} />
+        <DataRow label="Целева Температура" value={camera.target_temperature != null ? `${camera.target_temperature.toFixed(1)}°C` : "—"} />
+        <DataRow label="Температура на Изпарителя" value={camera.evaporator_temperature != null ? `${camera.evaporator_temperature.toFixed(1)}°C` : "—"} />
+        <DataRow label="Температура на Размразяване" value={camera.defrost_threshold_temperature != null ? `${camera.defrost_threshold_temperature.toFixed(1)}°C` : "—"} />
+        <DataRow label="Напрежение" value={camera.supply_voltage != null ? `${camera.supply_voltage.toFixed(1)}V` : "—"} />
       </div>
 
       {/* Controls */}
       <div className="border-t border-black/5 pt-4" onClick={(e) => e.stopPropagation()}>
-        <p className="text-[10px] text-black/30 tracking-wider mb-3">CONTROLS</p>
-        <ToggleSlider label="Auto Mode" value={autoMode} onChange={async (v) => { setAutoMode(v); await updateCamera({ auto_mode: v }); }} />
+        <p className="text-[10px] text-black/30 tracking-wider mb-3">КОНТРОЛНО МЕНЮ</p>
+        <ToggleSlider label="Автоматичен Режим" value={autoMode} onChange={async (v) => { setAutoMode(v); await updateCamera({ auto_mode: v }); }} />
         <div className="border-t border-black/5 my-1" />
-        <ToggleSlider label="Compressor" value={compressorOn} onChange={async (v) => { setCompressorOn(v); await updateCamera({ compressor_on: v }); }} disabled={autoMode} />
-        <ToggleSlider label="Ventilation" value={ventilationOn} onChange={async (v) => { setVentilationOn(v); await updateCamera({ ventilation_on: v }); }} disabled={autoMode} />
-        <ToggleSlider label="Heater" value={heaterOn} onChange={async (v) => { setHeaterOn(v); await updateCamera({ heater_on: v }); }} disabled={autoMode} />
+        <ToggleSlider label="Компресор" value={compressorOn} onChange={async (v) => { setCompressorOn(v); await updateCamera({ compressor_on: v }); }} disabled={autoMode} />
+        <ToggleSlider label="Вентилация" value={ventilationOn} onChange={async (v) => { setVentilationOn(v); await updateCamera({ ventilation_on: v }); }} disabled={autoMode} />
+        <ToggleSlider label="Нагревател" value={heaterOn} onChange={async (v) => { setHeaterOn(v); await updateCamera({ heater_on: v }); }} disabled={autoMode} />
       </div>
     </div>
   );

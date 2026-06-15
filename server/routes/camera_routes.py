@@ -6,38 +6,12 @@ from models.camera_log import CameraLog
 
 from database import db
 
-#"temperature": temperature,
-#        "humidity": humidity,
-#       "evaporator_temperature": evaporator_temperature,
-#        "supply_voltage": supply_voltage,
-#        "target_temperature": current_state.get("target_temperature"),
-#        "defrost_threshold_temperature": current_state.get("defrost_threshold_temperature"),
-#        "defrost_type": current_state.get("defrost_type"),
-#        "compressor_on": current_state["relay_states"].get("compressor") == 1,
-#        "ventilation_on": current_state["relay_states"].get("ventilation") == 1,
-#        "heater_on": current_state["relay_states"].get("heater") == 1,
-#        "auto_mode": current_state.get("auto_mode"),
-#        "status": current_state.get("status"),
-#        "problem": current_state.get("problem"),
-
-
-#      relays = current_state["relay_states"]
-#                relays["compressor"] = 1 if r.get("compressor_on") == True else 0
-#                relays["ventilation"] = 1 if r.get("ventilation_on") == True else 0
-#                relays["heater"] = 1 if r.get("heater_on") == True else 0
-
-
-#current_state.update({
-#                "auto_mode": r.get("auto_mode", current_state["auto_mode"]),
-#                "target_temperature": r.get("target_temperature", current_state["target_temperature"]),
-#                "defrost_type": r.get("defrost_type", current_state["defrost_type"]),
-#                "defrost_threshold_temperature": r.get("defrost_threshold_temperature", current_state["defrost_threshold_temperature"])
-#            })
-
 camera_bp = Blueprint("cameras", __name__)
+is_first_msg = True
 
 @camera_bp.route('/camera/<int:camera_id>', methods=["POST"])
 def push_readings(camera_id):
+    global is_first_msg
     auth = request.authorization
     if not auth or auth.username != 'raspberries' or auth.password != 'rapanarapana':
         return jsonify({"message": "Unauthorized"}), 401
@@ -50,12 +24,13 @@ def push_readings(camera_id):
 
     data = request.json
 
-    camera.defrost_threshold_temperature = data.get('defrost_threshold_temperature', -3.0)
-    camera.defrost_type = ModeEnum(data.get('defrost_type', "AUTO"))
-    camera.target_temperature = data.get("target_temperature", 0.0)
-    camera.auto_mode = data.get("auto_mode", True)
+    if is_first_msg:
+        camera.defrost_threshold_temperature = data.get('defrost_threshold_temperature', -3.0)
+        camera.defrost_type = ModeEnum(data.get('defrost_type', "AUTO"))
+        camera.target_temperature = data.get("target_temperature", 0.0)
+        is_first_msg = False
     camera.problem = data.get("problem", False)
-    camera.status = StatusEnum(data.get("status"), "OFF")
+    camera.status = StatusEnum(data.get("status", "OFF"))
     
     if camera.auto_mode != False:
         camera.compressor_on = data.get('compressor_on', False)
@@ -87,6 +62,7 @@ def push_instructions(camera_id):
     camera.target_temperature = data.get('target_temperature', camera.target_temperature)
     camera.defrost_threshold_temperature = data.get('defrost_threshold_temperature', camera.defrost_threshold_temperature)
     camera.auto_mode = data.get('auto_mode', camera.auto_mode)
+    camera.defrost_type = data.get("defrost_type", camera.defrost_type)
 
     if not camera.auto_mode:
         camera.compressor_on = data.get('compressor_on', camera.compressor_on)

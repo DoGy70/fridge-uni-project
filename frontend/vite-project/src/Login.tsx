@@ -26,10 +26,10 @@ export default function Login({ onLogin }: LoginProps) {
       if (res.ok) {
         onLogin();
       } else {
-        setError(data.message || "Login failed");
+        setError(data.message || "Проблем с входа");
       }
     } catch (e) {
-      setError("Could not connect to server");
+      setError("Неуспешна връзка със сървъра.");
     } finally {
       setLoading(false);
     }
@@ -53,15 +53,15 @@ export default function Login({ onLogin }: LoginProps) {
               <line x1="24" y1="28" x2="24" y2="24" stroke="white" strokeWidth="2" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-black tracking-tight mb-1">Frigidwatch</h1>
-          <p className="text-sm text-black/40">Monitoring Control System</p>
+          <h1 className="text-3xl font-bold text-black tracking-tight mb-1">ХладоСтраж</h1>
+          <p className="text-sm text-black/40">Система за Контрол и Мониторинг</p>
         </div>
 
         {/* Card */}
         <div className="bg-white rounded-3xl p-8 shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-black/5">
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <label className="text-xs text-black/50 font-medium tracking-wide">Email</label>
+              <label className="text-xs text-black/50 font-medium tracking-wide">Имейл</label>
               <input
                 type="email"
                 placeholder="operator@domain.com"
@@ -72,7 +72,7 @@ export default function Login({ onLogin }: LoginProps) {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-xs text-black/50 font-medium tracking-wide">Password</label>
+              <label className="text-xs text-black/50 font-medium tracking-wide">Парола</label>
               <input
                 type="password"
                 placeholder="••••••••••••"
@@ -94,12 +94,12 @@ export default function Login({ onLogin }: LoginProps) {
               disabled={loading}
               className="bg-[#ff7828] hover:bg-[#e86a1a] text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_20px_rgba(255,120,40,0.3)] mt-2"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Влизане..." : "Вход"}
             </button>
           </div>
         </div>
 
-        <p className="text-center text-black/20 text-xs mt-6">Secure · Encrypted</p>
+        <p className="text-center text-black/20 text-xs mt-6">Сигурно · Криптирано</p>
       </div>
     </div>
   );

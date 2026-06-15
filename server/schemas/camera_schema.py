@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 class CameraInstructionsSchema(Schema):
     compressor_on = fields.Bool(load_default=None)
@@ -7,6 +7,10 @@ class CameraInstructionsSchema(Schema):
     auto_mode = fields.Bool(load_default=None)
     target_temperature = fields.Float(load_default=None)
     defrost_threshold_temperature = fields.Float(load_default=None)
+    defrost_type = fields.Str(
+    load_default=None,
+    validate=validate.OneOf(["AUTO", "FORCED"])
+    )
 
 class CameraPushSchema(Schema):
     temperature = fields.Float(required=True)

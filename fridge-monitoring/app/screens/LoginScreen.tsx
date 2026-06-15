@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
-const BASE_URL = "http://172.20.10.4:8080";
+const BASE_URL = "http://192.168.0.177:8080";
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -62,14 +62,14 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             <View className="w-16 h-16 bg-[#ff7828] items-center justify-center mb-5 rounded-2xl shadow-md">
               <Text className="text-white text-2xl font-bold">F</Text>
             </View>
-            <Text className="text-3xl font-bold text-black tracking-tight">Frigidwatch</Text>
-            <Text className="text-sm text-black/40 mt-1">Monitoring Control System</Text>
+            <Text className="text-3xl font-bold text-black tracking-tight">ХладоСтраж</Text>
+            <Text className="text-sm text-black/40 mt-1">Система за Мониторинг</Text>
           </View>
 
           {/* Form */}
           <View className="bg-white rounded-3xl p-6 shadow-sm border border-black/5">
             <View className="mb-4">
-              <Text className="text-xs text-black/50 font-medium mb-2 tracking-wide">Email</Text>
+              <Text className="text-xs text-black/50 font-medium mb-2 tracking-wide">Имейл</Text>
               <TextInput
                 className="bg-black/5 rounded-xl px-4 py-3 text-black text-sm"
                 placeholder="operator@domain.com"
@@ -82,7 +82,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             </View>
 
             <View className="mb-4">
-              <Text className="text-xs text-black/50 font-medium mb-2 tracking-wide">Password</Text>
+              <Text className="text-xs text-black/50 font-medium mb-2 tracking-wide">Парола</Text>
               <TextInput
                 className="bg-black/5 rounded-xl px-4 py-3 text-black text-sm"
                 placeholder="••••••••••••"
@@ -108,12 +108,12 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
               {loading ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text className="text-white font-semibold text-sm">Sign In</Text>
+                <Text className="text-white font-semibold text-sm">Вход</Text>
               )}
             </TouchableOpacity>
           </View>
 
-          <Text className="text-center text-black/20 text-xs mt-6">Secure · Encrypted</Text>
+          <Text className="text-center text-black/20 text-xs mt-6">Сигурно · Криптирано</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

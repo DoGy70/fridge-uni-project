@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import * as SecureStore from "expo-secure-store";
 
-const BASE_URL = "http://172.20.10.4:8080";
+const BASE_URL = "http://192.168.0.177:8080";
 
 export function useApi(onLogout: () => void) {
   const refreshAccessToken = async (): Promise<string | null> => {
@@ -23,42 +23,45 @@ export function useApi(onLogout: () => void) {
     return data.access_token
   }
 
-  const fetchData = useCallback(async (endpoint: string, options: RequestInit = {}) => {
-    let token = await SecureStore.getItemAsync("access_token");
-    try{
-        let res = await fetch(`${BASE_URL}${endpoint}`, {
+    const fetchData = useCallback(async (endpoint: string, options: RequestInit = {}) => {
+    try {
+      let token = await SecureStore.getItemAsync("access_token");
+
+      let res = await fetch(`${BASE_URL}${endpoint}`, {
         ...options,
         headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            ...options.headers,
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...options.headers,
         },
-        });
+      });
 
-        if (res.status === 401) {
-            token = await refreshAccessToken();
-            if(!token) {
-              await SecureStore.deleteItemAsync('access_token');
-              await SecureStore.deleteItemAsync('refresh_token');
-              onLogout();
-              return null;
-            }
+      if (res.status === 401) {
+        token = await refreshAccessToken();
+        if (!token) {
+          await SecureStore.deleteItemAsync("access_token");
+          await SecureStore.deleteItemAsync("refresh_token");
+          onLogout();
+          return null;
         }
 
+        // Retry само при 401
         res = await fetch(`${BASE_URL}${endpoint}`, {
           ...options,
           headers: {
-            'Content-Type': "application/json",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            ...options.headers
-          }
-        })
-        return res;
+            ...options.headers,
+          },
+        });
+      }
+
+      return res;
     } catch (e) {
-        const error = e as Error
-        console.log(error.message)
+      const error = e as Error;
+      console.log(error.message);
+      return null;
     }
   }, [onLogout]);
-
   return fetchData;
 }

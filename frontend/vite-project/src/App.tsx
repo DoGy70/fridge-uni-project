@@ -30,8 +30,11 @@ export default function App() {
   }, []);
 
   if (loading) return (
-    <div className="min-h-screen bg-[#020d14] flex items-center justify-center font-mono text-[#00d4ff] text-xs tracking-[4px]">
-      INITIALIZING...
+    <div className="min-h-screen bg-white flex items-center justify-center font-sans">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 rounded-full border-2 border-black/10 border-t-[#ff7828] animate-spin" />
+        <p className="text-sm text-black/30">Зарежда се...</p>
+      </div>
     </div>
   );
 

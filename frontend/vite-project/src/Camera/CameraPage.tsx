@@ -12,6 +12,7 @@ interface Camera {
   auto_mode: boolean;
   target_temperature: number | null;
   defrost_threshold_temperature: number | null;
+  defrost_type: string | null;
   status: string | null;
   problem: boolean;
 }
@@ -46,6 +47,7 @@ export default function CameraPage({ fetchData }: CameraPageProps) {
     const res = await fetchData(`/dashboard/camera/${id}`);
     if (!res) return;
     const data = await res.json();
+
     setCamera(data.camera);
     setLogs(data.timestamps.map((ts: string, i: number) => ({
       timestamp: new Date(ts).toLocaleTimeString(),
@@ -80,7 +82,7 @@ export default function CameraPage({ fetchData }: CameraPageProps) {
 
   if (loading) return (
     <div className="min-h-screen bg-white flex items-center justify-center text-black/30 text-sm">
-      Loading unit...
+      Зарежда обект...
     </div>
   );
 
@@ -96,20 +98,20 @@ export default function CameraPage({ fetchData }: CameraPageProps) {
               onClick={() => navigate("/dashboard")}
               className="text-black/30 hover:text-[#ff7828] transition-colors text-sm"
             >
-              ← Back
+              ← Назад
             </button>
             <div>
-              <p className="text-xs text-black/30">Unit</p>
-              <h1 className="text-2xl font-bold text-black">CAM-{String(id).padStart(2, "0")}</h1>
+              <p className="text-xs text-black/30">Обект</p>
+              <h1 className="text-2xl font-bold text-black">Камера-{String(id).padStart(2, "0")}</h1>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {saving && <span className="text-xs text-[#ff7828] animate-pulse">Saving...</span>}
+            {saving && <span className="text-xs text-[#ff7828] animate-pulse">Запазва се...</span>}
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs ${
               latestLog ? "bg-[#ff7828]/10 text-[#ff7828]" : "bg-black/5 text-black/30"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full ${latestLog ? "bg-[#ff7828] animate-pulse" : "bg-black/20"}`} />
-              {latestLog ? "Online" : "Offline"}
+              {latestLog ? "Онлайн" : "Офлайн"}
             </div>
           </div>
         </div>
@@ -124,38 +126,45 @@ export default function CameraPage({ fetchData }: CameraPageProps) {
               heaterOn={heaterOn}
               targetTemperature={camera?.target_temperature ?? null}
               defrostThreshold={camera?.defrost_threshold_temperature ?? null}
+              defrostTypeProp={camera?.defrost_type ?? null}
               onAutoMode={async (v) => { setAutoMode(v); await updateCamera({ auto_mode: v }); }}
               onCompressor={async (v) => { setCompressorOn(v); await updateCamera({ compressor_on: v }); }}
               onVentilation={async (v) => { setVentilationOn(v); await updateCamera({ ventilation_on: v }); }}
               onHeater={async (v) => { setHeaterOn(v); await updateCamera({ heater_on: v }); }}
-              onSave={async (updates: any) => {
-                await updateCamera(updates);
-                setCamera((prev) => prev ? { ...prev, ...updates } : prev);
+              onSave={async (updates: any, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
+                try {
+                  setLoading(true)
+                  await updateCamera(updates);
+                  setCamera((prev) => prev ? { ...prev, ...updates } : prev);
+                  setLoading(false)
+                } catch(error) {
+                    console.log(error)
+                }
               }}
             />
           </div>
 
           <div className="lg:col-span-2 flex flex-col gap-4">
             <CameraChart
-              title="TEMPERATURE"
+              title="ТЕМПЕРАТУРА"
               data={logs}
               unit="°"
               lines={[
-                { dataKey: "temperature", stroke: "#ff7828", name: "Temp" },
-                { dataKey: "evaporator_temperature", stroke: "#ffb347", name: "Evaporator" },
+                { dataKey: "temperature", stroke: "#ff7828", name: "Помещение" },
+                { dataKey: "evaporator_temperature", stroke: "#ffb347", name: "Изпарител" },
               ]}
             />
             <CameraChart
-              title="HUMIDITY"
+              title="ВЛАЖНОСТ"
               data={logs}
               unit="%"
-              lines={[{ dataKey: "humidity", stroke: "#333333", name: "Humidity" }]}
+              lines={[{ dataKey: "humidity", stroke: "#333333", name: "Влажност" }]}
             />
             <CameraChart
-              title="VOLTAGE"
+              title="НАПРЕЖЕНИЕ"
               data={logs}
               unit="V"
-              lines={[{ dataKey: "supply_voltage", stroke: "#ff4444", name: "Voltage" }]}
+              lines={[{ dataKey: "supply_voltage", stroke: "#ff4444", name: "Напрежение" }]}
             />
           </div>
         </div>

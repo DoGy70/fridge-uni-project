@@ -20,9 +20,9 @@ export default function CameraCard({ camera, onPress }: CameraCardProps) {
       {/* Header */}
       <View className="flex-row justify-between items-start mb-4">
         <View>
-          <Text className="text-xs text-black/30 mb-0.5">Unit</Text>
+          <Text className="text-xs text-black/30 mb-0.5">Обект</Text>
           <Text className="text-xl font-bold text-black">
-            CAM-{String(camera.id).padStart(2, "0")}
+            Камера-{String(camera.id).padStart(2, "0")}
           </Text>
         </View>
         <StatusBadge online={isOnline} />
@@ -30,19 +30,19 @@ export default function CameraCard({ camera, onPress }: CameraCardProps) {
 
       {/* Temp Display */}
       <View className="bg-[#ff7828] rounded-2xl p-4 mb-4 items-center">
-        <Text className="text-xs text-white/70 tracking-wider mb-1">CURRENT TEMP</Text>
+        <Text className="text-xs text-white/70 tracking-wider mb-1">ТЕКУЩА ТЕМПЕРАТУРА</Text>
         <Text className="text-4xl font-bold text-white">
           {camera.temperature != null ? `${camera.temperature.toFixed(1)}°` : "—"}
         </Text>
-        <Text className="text-xs text-white/50 mt-1">Celsius</Text>
+        <Text className="text-xs text-white/50 mt-1">Целзий</Text>
       </View>
 
       {/* Data Rows */}
-      <DataRow label="Target Temp" value={camera.target_temperature != null ? `${camera.target_temperature.toFixed(1)}°C` : "—"} />
-      <DataRow label="Evaporator Temp" value={camera.evaporator_temperature != null ? `${camera.evaporator_temperature.toFixed(1)}°C` : "—"} />
-      <DataRow label="Defrost Threshold" value={camera.defrost_threshold_temperature != null ? `${camera.defrost_threshold_temperature.toFixed(1)}°C` : "—"} />
-      <DataRow label="Humidity" value={camera.humidity != null ? `${camera.humidity.toFixed(1)}%` : "—"} />
-      <DataRow label="Voltage" value={camera.supply_voltage != null ? `${camera.supply_voltage.toFixed(1)}V` : "—"} />
+      <DataRow label="Желана Температура" value={camera.target_temperature != null ? `${camera.target_temperature.toFixed(1)}°C` : "—"} />
+      <DataRow label="Температура на Изпарителя" value={camera.evaporator_temperature != null ? `${camera.evaporator_temperature.toFixed(1)}°C` : "—"} />
+      <DataRow label="Температура за Дефрост" value={camera.defrost_threshold_temperature != null ? `${camera.defrost_threshold_temperature.toFixed(1)}°C` : "—"} />
+      <DataRow label="Влажност" value={camera.humidity != null ? `${camera.humidity.toFixed(1)}%` : "—"} />
+      <DataRow label="Напрежение" value={camera.supply_voltage != null ? `${camera.supply_voltage.toFixed(1)}V` : "—"} />
     </TouchableOpacity>
   );
 }

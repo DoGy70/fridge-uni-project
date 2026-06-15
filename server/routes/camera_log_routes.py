@@ -49,6 +49,7 @@ def get_logs(camera_id):
             'target_temperature': camera.target_temperature,
             'compressor_on': camera.compressor_on,
             'heater_on': camera.heater_on,
+            'defrost_type': camera.defrost_type.name,
             'ventilation_on': camera.ventilation_on,
             'auto_mode': camera.auto_mode
         },
