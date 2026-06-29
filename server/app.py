@@ -18,7 +18,7 @@ import sqlite3
 from database import db
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from models.camera_log import CameraLog
 from models.camera import Camera
@@ -30,7 +30,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-BASE_DIR = str(Path.home() / "Desktop" / "diploment-proekt" / "fridge-uni-project-main" / "server")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, os.environ.get('DB_PATH', 'camera.db'))}"
@@ -58,7 +58,7 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 # Delete Old Logs (more than 1 year)
 def delete_old_logs():
     with app.app_context():
-        cutoff = datetime.utcnow() - timedelta(days=365)
+        cutoff = datetime.now(timezone.utc) - timedelta(days=365)
         CameraLog.query.filter(CameraLog.timestamp < cutoff).delete()
         db.session.commit()
 
